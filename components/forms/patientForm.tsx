@@ -20,6 +20,8 @@ import CustomFormField from "../customFormField"
 import SubmitButton from "../submitButton"
 import { UserFormValidation } from "@/lib/validation"
 import { useRouter } from "next/navigation"
+import { createUser } from "@/lib/actions/patient.action"
+
 
 
 export enum FormFieldType {
@@ -35,6 +37,7 @@ export enum FormFieldType {
 
  
 const PatientForm = () => {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false)
   const form = useForm<z.infer<typeof UserFormValidation>>({
     resolver: zodResolver(UserFormValidation),
@@ -49,11 +52,11 @@ const PatientForm = () => {
   async function onSubmit({name, email, phone}: z.infer<typeof UserFormValidation>) {
 
     try {
-      // const userData = {name, email, phone}
+      const userData = {name, email, phone}
 
-      // const user = await createUser(userData)
+      const user = await createUser(userData)
 
-      // if(user) Router.push(`/patient/${user.$id}/register`)
+      if(user) router.push(`/patient/${user.$id}/register`)
 
       
     } catch (error) {
