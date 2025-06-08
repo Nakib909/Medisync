@@ -1,4 +1,4 @@
-
+/* eslint-disable no-unused-vars */
 
 declare type SearchParamProps = {
   params: { [key: string]: string };
@@ -51,6 +51,7 @@ declare type CreateAppointmentParams = {
 declare type UpdateAppointmentParams = {
   appointmentId: string;
   userId: string;
+  timeZone: string;
   appointment: Appointment;
   type: string;
 };

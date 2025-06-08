@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
  
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -10,11 +10,11 @@ import {Form, FormControl} from "@/components/ui/form"
 
 import CustomFormField from "../customFormField"
 import SubmitButton from "../submitButton"
-import { UserFormValidation } from "@/lib/validation"
+import { PatientFormValidation } from "@/lib/validation"
 import { useRouter } from "next/navigation"
-import { createUser } from "@/lib/actions/patient.action"
+import { registerPatient } from "@/lib/actions/patient.action"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
-import { Doctors, GenderOptions, IdentificationTypes } from "@/constants"
+import { Doctors, GenderOptions, IdentificationTypes, PatientFormDefaultValues } from "@/constants"
 import { Label } from "../ui/label"
 import { SelectItem } from "../ui/select"
 import Image from "next/image"
@@ -37,30 +37,79 @@ export enum FormFieldType {
 const RegisterForm = ({user}: {user: User}) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false)
-  const form = useForm<z.infer<typeof UserFormValidation>>({
-    resolver: zodResolver(UserFormValidation),
+  const form = useForm<z.infer<typeof PatientFormValidation>>({
+    resolver: zodResolver(PatientFormValidation),
     defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
+      ...PatientFormDefaultValues,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      privacyConsent: false,
+      treatmentConsent: false,
+      disclosureConsent: false,
     },
-  })
+  });
+
+  useEffect(() => {
+    console.log("Validation Errors:", form.formState.errors);
+  }, [form.formState.errors]);
  
 
- const onSubmit = async (values: z.infer<typeof UserFormValidation>) => {
+ const onSubmit = async (values: z.infer<typeof PatientFormValidation>) => {
+  console.log("Submitted");
+  
     setIsLoading(true);
 
+        let formData;
+    if (
+      values.identificationDocument &&
+      values.identificationDocument?.length > 0
+    ) {
+      const blobFile = new Blob([values.identificationDocument[0]], {
+        type: values.identificationDocument[0].type,
+      });
+
+      formData = new FormData();
+      formData.append("blobFile", blobFile);
+      formData.append("fileName", values.identificationDocument[0].name);
+    }
+
+    console.log("User: ", user);
+
     try {
-      const user = {
+      const patient = {
+        userId: user.$id,
         name: values.name,
         email: values.email,
         phone: values.phone,
+        birthDate: new Date(values.birthDate),
+        gender: values.gender,
+        address: values.address,
+        occupation: values.occupation,
+        emergencyContactName: values.emergencyContactName,
+        emergencyContactNumber: values.emergencyContactNumber,
+        primaryPhysician: values.primaryPhysician,
+        insuranceProvider: values.insuranceProvider,
+        insuranceProviderNumber: values.insuranceProviderNumber,
+        allergies: values.allergies,
+        currentMedication: values.currentMedication,
+        familyMedicalHistory: values.familyMedicalHistory,
+        pastMedicalHistory: values.pastMedicalHistory,
+        identificationType: values.identificationType,
+        identificationNumber: values.identificationNumber,
+        identificationDocument: values.identificationDocument
+          ? formData
+          : undefined,
+        privacyConsent: values.privacyConsent,
+        disclosureConsent: values.disclosureConsent,
+        treatmentConsent: values.treatmentConsent,
       };
 
-      const newUser = await createUser(user);
+      //@ts-ignore
+      const newPatient = await registerPatient(patient);
 
-      if (newUser) {
-        router.push(`/patients/${newUser.$id}/register`);
+    if (newPatient) {
+        router.push(`/patients/${user.$id}/new-appointment`);
       }
     } catch (error) {
       console.log(error);
@@ -70,7 +119,7 @@ const RegisterForm = ({user}: {user: User}) => {
   };
 
   return (
-        <Form {...form}>
+      <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 space-y-12">
         <section className=" space-y-4">
             <h1 className="header">Welcome!</h1>
@@ -250,7 +299,7 @@ const RegisterForm = ({user}: {user: User}) => {
           <CustomFormField
             fieldType={FormFieldType.INPUT}
             control={form.control}
-            name="insurancePolicyNumber"
+            name="insuranceProviderNumber"
             label="Insurance Policy Number"
             placeholder="ABC123456789"
         />

@@ -5,13 +5,15 @@ import Link from 'next/link'
 import RegisterForm from '@/components/forms/registerForm'
 import { getUser } from '@/lib/actions/patient.action'
 
-const Register = async ({params: {userId}}: SearchParamProps) => {
+
+
+const Register = async ({ params: { userId } }: SearchParamProps) => {
     const user = await getUser(userId);
 
 
     return (
         <div className="flex h-screen max-h-screen">
-      <section className="remove-scrollbar container">
+      <section className="remove-scrollbar container my-auto">
         <div className="sub-container max-w-[860px] flex-1 flex-col py-10">
               <div className="w-fit mb-8 flex flex-row items-center justify-center gap-2">
                 <Image
