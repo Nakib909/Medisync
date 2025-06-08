@@ -104,6 +104,7 @@ export const AppointmentForm = ({
             schedule: new Date(values.schedule),
             status: status as Status,
             cancellationReason: values.cancellationReason,
+            note: values.note, 
           },
           type,
         };
@@ -192,7 +193,7 @@ export const AppointmentForm = ({
           <CustomFormField
             fieldType={FormFieldType.TEXTAREA}
             control={form.control}
-            name="notes"
+            name="note"
             label="Notes"
             placeholder="Enter notes"
         />

@@ -13,7 +13,7 @@ import {
 } from "../appwrite.config";
 import { formatDateTime, parseStringify } from "../utils";
 
-//  CREATE APPOINTMENT
+
 export const createAppointment = async (
   appointment: CreateAppointmentParams
 ) => {
@@ -145,7 +145,7 @@ export const updateAppointment = async ({
   }
 };
 
-// GET APPOINTMENT
+
 export const getAppointment = async (appointmentId: string) => {
   try {
     const appointment = await databases.getDocument(
