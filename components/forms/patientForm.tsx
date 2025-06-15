@@ -98,7 +98,7 @@ const PatientForm = () => {
             placeholder="(+880) 1711111111"
         />
 
-        <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
+        <SubmitButton isLoading={isLoading} >Get Started</SubmitButton>
       </form>
     </Form>
   )
