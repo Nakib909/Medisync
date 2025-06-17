@@ -32,7 +32,7 @@ export const createAppointment = async (
   }
 };
 
-//  GET RECENT APPOINTMENTS
+
 export const getRecentAppointmentList = async () => {
   try {
     const appointments = await databases.listDocuments(
@@ -116,7 +116,7 @@ export const sendSMSNotification = async (userId: string, content: string) => {
   }
 };
 
-//  UPDATE APPOINTMENT
+
 export const updateAppointment = async ({
   appointmentId,
   userId,
