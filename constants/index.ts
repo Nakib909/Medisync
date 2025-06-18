@@ -44,40 +44,59 @@ export const Doctors = [
   {
     image: "/assets/images/dr-green.png",
     name: "Sulaiman Ahmed",
+    education: "MBBS, FCPS (Medicine), MD (Cardiology)",
+    specialization: "Cardiologist",
   },
   {
     image: "/assets/images/dr-cameron.png",
     name: "Akter Sharmin",
+    education: "MBBS, DGO, MS (Gynaecology & Obstetrics)",
+    specialization: "Gynaecologist & Obstetrician",
   },
   {
     image: "/assets/images/dr-livingston.png",
     name: "Iqbal Ahmed",
+    education: "MBBS, MS (Orthopaedics)",
+    specialization: "Orthopaedic Surgeon",
   },
   {
     image: "/assets/images/dr-peter.png",
     name: "Evan Amin",
+    education: "MBBS, MD (Dermatology)",
+    specialization: "Dermatologist",
   },
   {
     image: "/assets/images/dr-powell.png",
     name: "Jahan Ahmed",
+    education: "MBBS, MD (Neurology)",
+    specialization: "Neurologist",
   },
   {
     image: "/assets/images/dr-remirez.png",
     name: "Ali Iqbal",
+    education: "MBBS, FCPS (Paediatrics)",
+    specialization: "Child Specialist (Paediatrician)",
   },
   {
     image: "/assets/images/dr-lee.png",
     name: "Jasmine Akter",
+    education: "MBBS, MS (ENT)",
+    specialization: "ENT Specialist",
   },
   {
     image: "/assets/images/dr-cruz.png",
     name: "Alyana Chowdhury",
+    education: "MBBS, FCPS (Ophthalmology)",
+    specialization: "Eye Specialist (Ophthalmologist)",
   },
   {
     image: "/assets/images/dr-sharma.png",
     name: "Hardik Sharma",
+    education: "MBBS, MD (Psychiatry)",
+    specialization: "Psychiatrist",
   },
 ];
+
 
 export const StatusIcon = {
   scheduled: "/assets/icons/check.svg",
