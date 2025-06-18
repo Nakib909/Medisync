@@ -12,7 +12,7 @@ export default function Home({searchParams}: SearchParamProps) {
 
       {isAdmin && <PassKeyModal/>}
 
-      <section className="remove-scrollbar container my-auto">
+      <section className="remove-scrollbar container ">
         <div className="sub-container max-w-[496px]">
           <div className="w-fit mb-8 flex flex-row items-center justify-center gap-2">
             <Image
