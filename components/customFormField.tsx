@@ -31,6 +31,7 @@ interface CustomProps {
     iconSrc?: string,
     iconAlt?: string,
     disabled?: boolean,
+    minDate?: Date; 
     dateFormat?: string,
     showTimeSelect?: boolean,
     children?: React.ReactNode,
@@ -109,13 +110,13 @@ const RenderField = ({field, props}: {field: any; props: CustomProps}) => {
             <DatePicker 
             selected={field.value} 
             onChange={(date) => field.onChange(date)} 
-            dateFormat={dateFormat ?? 'MM/dd/yyyy'} 
+            dateFormat={dateFormat ?? 'dd/MM/yyyy'} 
             showTimeSelect={showTimeSelect ?? false} 
             timeInputLabel='Time:' 
             minTime={minTime} 
             maxTime={maxTime} 
             timeIntervals={15} 
-            minDate={new Date()} 
+            minDate={props.minDate ?? new Date()}
             wrapperClassName='date-picker'/>
           </FormControl>
         </div>

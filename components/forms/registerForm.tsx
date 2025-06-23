@@ -174,6 +174,7 @@ const RegisterForm = ({user}: {user: User}) => {
             fieldType={FormFieldType.DATE_PICKER}
             control={form.control}
             name="birthDate"
+            minDate={new Date(1900, 0, 1)}
             label="Date of Birth"
         />
           </div>
