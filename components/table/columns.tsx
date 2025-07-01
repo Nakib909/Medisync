@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
 
@@ -22,7 +24,14 @@ export const columns: ColumnDef<Appointment>[] = [
     header: "Patient",
     cell: ({ row }) => {
       const appointment = row.original;
-      return <p className="text-14-medium ">{appointment.patient.name}</p>;
+      return (
+        <Link
+  href={`/users/${appointment.patient.$id}`}
+  className="text-blue-500 hover:underline"
+>
+  {appointment.patient.name}
+</Link>
+      );
     },
   },
   {
