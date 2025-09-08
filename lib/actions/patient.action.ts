@@ -1,6 +1,6 @@
 'use server'
 
-import { ID, Query } from "node-appwrite"
+import { ID, Permission, Query, Role } from "node-appwrite"
 import { BUCKET_ID, DATABASE_ID, databases, PATIENT_COLLECTION_ID, storage, users, ENDPOINT, PROJECT_ID } from "../appwrite.config"
 import { parseStringify } from "../utils"
 import {InputFile} from 'node-appwrite/file'
@@ -69,7 +69,7 @@ export const registerPatient = async ({
           identificationDocument?.get("fileName") as string
         );
 
-      file = await storage.createFile(BUCKET_ID!, ID.unique(), inputFile);
+      file = await storage.createFile(BUCKET_ID!, ID.unique(), inputFile)  ;
     }
 
     // Create new patient document -> https://appwrite.io/docs/references/cloud/server-nodejs/databases#createDocument
@@ -81,7 +81,7 @@ export const registerPatient = async ({
         userId,
         identificationDocumentId: file?.$id ? file.$id : null,
         identificationDocumentUrl: file?.$id
-          ? `${ENDPOINT}/storage/buckets/${BUCKET_ID}/files/${file.$id}/view??project=${PROJECT_ID}`
+          ? `${ENDPOINT}/storage/buckets/${BUCKET_ID}/files/${file.$id}/view?project=${PROJECT_ID}`
           : null,
         ...patient,
       }
@@ -90,5 +90,19 @@ export const registerPatient = async ({
     return parseStringify(newPatient);
   } catch (error) {
     console.error("An error occurred while creating a new patient:", error);
+  }
+};
+
+export const getPatientById = async (patientId: string) => {
+  try {
+    const response = await databases.getDocument(
+      DATABASE_ID!,
+      PATIENT_COLLECTION_ID!,
+      patientId
+    );
+    return response;
+  } catch (error) {
+    console.error("Error fetching patient:", error);
+    return null;
   }
 };

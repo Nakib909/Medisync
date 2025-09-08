@@ -174,6 +174,7 @@ const RegisterForm = ({user}: {user: User}) => {
             fieldType={FormFieldType.DATE_PICKER}
             control={form.control}
             name="birthDate"
+            minDate={new Date(1900, 0, 1)}
             label="Date of Birth"
         />
           </div>
@@ -268,7 +269,7 @@ const RegisterForm = ({user}: {user: User}) => {
         >
           {Doctors.map((doctor) => (
             <SelectItem key={doctor.name} value={doctor.name}>
-              <div className="flex cursor-pointer items-center gap-2">
+              <div className="flex cursor-pointer items-center gap-2 sm:text-sm text-xs  ">
                 <Image
                   src={doctor.image}
                   width={32}
@@ -276,7 +277,12 @@ const RegisterForm = ({user}: {user: User}) => {
                   alt={doctor.name}
                   className="rounded-full border border-dark-500"
                 />
+                <div className="flex flex-col sm:flex-row gap-2">
                 <p>{doctor.name}</p>
+                <p>{doctor.education}</p>
+                <p className="font-bold">{doctor.specialization}</p>
+                </div>
+                
               </div>
 
             </SelectItem>

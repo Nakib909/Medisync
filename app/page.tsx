@@ -1,11 +1,18 @@
 import PatientForm from "@/components/forms/patientForm";
+import PassKeyModal from "@/components/PassKeyModal";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Home() {
+export default function Home({searchParams}: SearchParamProps) {
+  const isAdmin = searchParams?.admin === "true";
+
+
   return (
     <div className="flex h-screen max-h-screen ">
-      <section className="remove-scrollbar container my-auto">
+
+      {isAdmin && <PassKeyModal/>}
+
+      <section className="remove-scrollbar container ">
         <div className="sub-container max-w-[496px]">
           <div className="w-fit mb-8 flex flex-row items-center justify-center gap-2">
             <Image

@@ -31,6 +31,7 @@ interface CustomProps {
     iconSrc?: string,
     iconAlt?: string,
     disabled?: boolean,
+    minDate?: Date; 
     dateFormat?: string,
     showTimeSelect?: boolean,
     children?: React.ReactNode,
@@ -39,6 +40,9 @@ interface CustomProps {
 
 
 const RenderField = ({field, props}: {field: any; props: CustomProps}) => {
+  const today = new Date();
+  const minTime = new Date(today.setHours(17, 0, 0, 0)); // 5:00 PM
+  const maxTime = new Date(today.setHours(22, 0, 0, 0));
   const {fieldType, iconSrc, iconAlt, placeholder, showTimeSelect, dateFormat, renderSkeleton} = props;
   switch (fieldType) {
     case FormFieldType.INPUT:
@@ -103,7 +107,17 @@ const RenderField = ({field, props}: {field: any; props: CustomProps}) => {
           />
           
           <FormControl>
-            <DatePicker selected={field.value} onChange={(date) => field.onChange(date)} dateFormat={dateFormat ?? 'MM/dd/yyyy'} showTimeSelect={showTimeSelect ?? false} timeInputLabel='Time:' wrapperClassName='date-picker'/>
+            <DatePicker 
+            selected={field.value} 
+            onChange={(date) => field.onChange(date)} 
+            dateFormat={dateFormat ?? 'dd/MM/yyyy'} 
+            showTimeSelect={showTimeSelect ?? false} 
+            timeInputLabel='Time:' 
+            minTime={minTime} 
+            maxTime={maxTime} 
+            timeIntervals={15} 
+            minDate={props.minDate ?? new Date()}
+            wrapperClassName='date-picker'/>
           </FormControl>
         </div>
       )
