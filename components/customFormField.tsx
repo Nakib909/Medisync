@@ -115,7 +115,7 @@ const RenderField = ({field, props}: {field: any; props: CustomProps}) => {
             timeInputLabel='Time:' 
             minTime={minTime} 
             maxTime={maxTime} 
-            timeIntervals={15} 
+            timeIntervals={60} 
             minDate={props.minDate ?? new Date()}
             wrapperClassName='date-picker'/>
           </FormControl>
