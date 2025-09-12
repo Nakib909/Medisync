@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 
 import {Form} from "@/components/ui/form"
+import { fetchPatientByUserId } from "@/lib/actions/patient.action";
 
 import CustomFormField from "../customFormField"
 import SubmitButton from "../submitButton"
@@ -41,27 +42,47 @@ const PatientForm = () => {
   })
  
 
- const onSubmit = async (values: z.infer<typeof UserFormValidation>) => {
-    setIsLoading(true);
+const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    try {
-      const user = {
-        name: values.name,
-        email: values.email,
-        phone: values.phone,
-      };
+const onSubmit = async (values: z.infer<typeof UserFormValidation>) => {
+  setIsLoading(true);
+  setErrorMessage(null); 
 
-      const newUser = await createUser(user);
+  try {
+    const user = {
+      name: values.name,
+      email: values.email,
+      phone: values.phone,
+    };
 
-      if (newUser) {
+    
+    const newUser = await createUser(user);
+
+    if (newUser) {
+      
+      const existingPatient = await fetchPatientByUserId(newUser.$id);
+
+      
+      if (newUser.phone && newUser.phone !== values.phone) {
+        setErrorMessage("Email registered with different phone number. Try again.");
+        setIsLoading(false);
+        return; 
+      }
+
+      if (existingPatient) {
+        router.push(`/patients/${newUser.$id}/new-appointment`);
+      } else {
         router.push(`/patients/${newUser.$id}/register`);
       }
-    } catch (error) {
-      console.log(error);
     }
+  } catch (error) {
+    console.error(error);
+    setErrorMessage("Something went wrong. Please try again.");
+  }
 
-    setIsLoading(false);
-  };
+  setIsLoading(false);
+};
+
 
   return (
         <Form {...form}>
@@ -97,8 +118,11 @@ const PatientForm = () => {
             label="Phone number"
             placeholder="(+880) 1711111111"
         />
+        {errorMessage && (
+  <p className="text-red-500 text-sm">{errorMessage}</p>
+)}
 
-        <SubmitButton isLoading={isLoading} >Get Started</SubmitButton>
+        <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
       </form>
     </Form>
   )

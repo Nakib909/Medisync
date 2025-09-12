@@ -28,6 +28,26 @@ export const createUser = async (user: CreateUserParams) => {
     }
 }
 
+export const fetchPatientByUserId = async (userId: string) => {
+  try {
+    if (!DATABASE_ID || !PATIENT_COLLECTION_ID) {
+  throw new Error("Missing Appwrite environment variables!");
+}
+
+    const response = await databases.listDocuments(
+      DATABASE_ID,
+      PATIENT_COLLECTION_ID,
+      [Query.equal("userId", userId)]
+    );
+
+    // if patient already registered, return it
+    return response.documents.length > 0 ? response.documents[0] : null;
+  } catch (error) {
+    console.error("Error fetching patient:", error);
+    return null;
+  }
+};
+
 export const getUser = async (userId: string) => {
     try {
         const user = await users.get(userId);
