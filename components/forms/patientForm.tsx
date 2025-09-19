@@ -5,9 +5,11 @@ import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { account } from "@/lib/appwrite.client"
+import { ID } from "node-appwrite"; 
 
 import {Form} from "@/components/ui/form"
-import { fetchPatientByUserId } from "@/lib/actions/patient.action";
+import { fetchPatientByUserId, sendVerificationEmailServerSide} from "@/lib/actions/patient.action";
 
 import CustomFormField from "../customFormField"
 import SubmitButton from "../submitButton"
@@ -44,44 +46,39 @@ const PatientForm = () => {
 
 const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-const onSubmit = async (values: z.infer<typeof UserFormValidation>) => {
-  setIsLoading(true);
-  setErrorMessage(null); 
+ const onSubmit = async (values: z.infer<typeof UserFormValidation>) => {
+    setIsLoading(true)
+    setErrorMessage(null)
 
-  try {
-    const user = {
-      name: values.name,
-      email: values.email,
-      phone: values.phone,
-    };
-
-    
-    const newUser = await createUser(user);
-
-    if (newUser) {
+    try {
       
-      const existingPatient = await fetchPatientByUserId(newUser.$id);
+      const newUser = await createUser({
+        name: values.name,
+        email: values.email,
+        phone: values.phone,
+      })
+
+      if (!newUser) throw new Error("Failed to create user")
 
       
-      if (newUser.phone && newUser.phone !== values.phone) {
-        setErrorMessage("Email registered with different phone number. Try again.");
-        setIsLoading(false);
-        return; 
-      }
+      const redirectUrl =
+        process.env.NEXT_PUBLIC_VERIFY_REDIRECT_URL || "http://localhost:3000/verify"
 
-      if (existingPatient) {
-        router.push(`/patients/${newUser.$id}/new-appointment`);
-      } else {
-        router.push(`/patients/${newUser.$id}/register`);
-      }
+      await account.createMagicURLToken(ID.unique(), values.email, redirectUrl)
+
+      setErrorMessage("✅ Account created! Please check your email for the login link.")
+    } catch (error: any) {
+      console.error("Error:", error)
+      setErrorMessage(error.message || "Something went wrong. Please try again.")
     }
-  } catch (error) {
-    console.error(error);
-    setErrorMessage("Something went wrong. Please try again.");
+
+    setIsLoading(false)
   }
 
-  setIsLoading(false);
-};
+
+
+
+
 
 
   return (

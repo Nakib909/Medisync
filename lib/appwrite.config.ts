@@ -9,6 +9,7 @@ export const {
   DOCTOR_COLLECTION_ID,
   APPOINTMENT_COLLECTION_ID,
   NEXT_PUBLIC_BUCKET_ID: BUCKET_ID,
+  NEXT_PUBLIC_VERIFY_REDIRECT_URL
 } = process.env;
 
 if (!ENDPOINT || !PROJECT_ID || !API_KEY) {
@@ -24,5 +25,3 @@ export const databases = new sdk.Databases(client);
 export const users = new sdk.Users(client);
 export const messaging = new sdk.Messaging(client);
 export const storage = new sdk.Storage(client);
-
-
