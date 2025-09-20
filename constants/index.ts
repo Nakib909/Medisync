@@ -91,7 +91,7 @@ export const Doctors = [
   },
   {
     image: "/assets/images/dr-sharma.png",
-    name: "Hardik Sharma",
+    name: "Delowar Hossain",
     education: "MBBS, MD (Psychiatry)",
     specialization: "Psychiatrist",
   },
