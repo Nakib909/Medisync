@@ -12,8 +12,7 @@ export async function POST(req: Request) {
     const client = new Client()
       .setEndpoint("https://fra.cloud.appwrite.io/v1")
       .setProject(process.env.PROJECT_ID!)
-      .setKey(process.env.API_KEY!); // server key only here
-
+     
     const account = new Account(client);
 
     // ✅ Complete magic URL login
