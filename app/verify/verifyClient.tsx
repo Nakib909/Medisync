@@ -1,37 +1,65 @@
-import { NextResponse } from "next/server";
-import { Client, Account } from "node-appwrite";
+"use client";
 
-export async function POST(req: Request) {
-  try {
-    const { userId, secret } = await req.json();
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { fetchPatientByUserId, createUser } from "@/lib/actions/patient.action"
 
-    if (!userId || !secret) {
-      return NextResponse.json({ success: false, error: "Missing userId or secret" }, { status: 400 });
-    }
+const VerifyClient = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const userId = searchParams.get("userId");
+  const secret = searchParams.get("secret");
 
-    // ✅ Use Server SDK with API Key
-    const client = new Client()
-      .setEndpoint("https://fra.cloud.appwrite.io/v1")
-      .setProject(process.env.PROJECT_ID!)
-      .setKey(process.env.API_KEY!); // ← Add this line
+  const [message, setMessage] = useState("Verifying your account, please wait...");
 
-    const account = new Account(client);
+  useEffect(() => {
+    const completeVerification = async () => {
+      if (!userId || !secret) {
+        setMessage("Invalid verification link.");
+        return;
+      }
 
-    // ✅ Complete magic URL login using server SDK
-    const session = await account.updateMagicURLSession(userId, secret);
-    
-    // ✅ Create a client with the session token for user operations
-    const userClient = new Client()
-      .setEndpoint("https://fra.cloud.appwrite.io/v1")
-      .setProject(process.env.PROJECT_ID!)
-      .setSession(session.secret); // ← Use the session from the magic URL
+      try {
+        // ✅ Client only calls our server API
+        const res = await fetch("/api/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId, secret }),
+        });
 
-    const userAccount = new Account(userClient);
-    const user = await userAccount.get();
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error || "Verification failed");
 
-    return NextResponse.json({ success: true, user });
-  } catch (err: any) {
-    console.error("Verification API error:", err);
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
-  }
-}
+        const loggedInUser = data.user;
+        const newUser = await createUser({
+            name: loggedInUser.name,
+            email: loggedInUser.email,
+            phone: loggedInUser.phone,
+            
+          })
+
+        // ✅ Optional: create your own user in DB
+        const existingPatient = await fetchPatientByUserId(newUser.$id)
+
+          if (existingPatient) {
+            router.push(`/patients/${newUser.$id}/new-appointment`)
+          } else {
+            router.push(`/patients/${newUser.$id}/register`)
+          }
+        } catch (err) {
+          console.error("Verification failed:", err)
+          setMessage("Verification failed. Please try again.")
+        }
+    };
+
+    completeVerification();
+  }, [userId, secret, router]);
+
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <p>{message}</p>
+    </div>
+  );
+};
+
+export default VerifyClient;

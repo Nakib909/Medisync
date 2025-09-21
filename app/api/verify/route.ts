@@ -9,17 +9,25 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, error: "Missing userId or secret" }, { status: 400 });
     }
 
+    // ✅ Use Server SDK with API Key
     const client = new Client()
       .setEndpoint("https://fra.cloud.appwrite.io/v1")
       .setProject(process.env.PROJECT_ID!)
-     
+      .setKey(process.env.API_KEY!); // ← Add this line
+
     const account = new Account(client);
 
-    // ✅ Complete magic URL login
-    await account.updateMagicURLSession(userId, secret);
+    // ✅ Complete magic URL login using server SDK
+    const session = await account.updateMagicURLSession(userId, secret);
+    
+    // ✅ Create a client with the session token for user operations
+    const userClient = new Client()
+      .setEndpoint("https://fra.cloud.appwrite.io/v1")
+      .setProject(process.env.PROJECT_ID!)
+      .setSession(session.secret); // ← Use the session from the magic URL
 
-    // ✅ Fetch logged-in user
-    const user = await account.get();
+    const userAccount = new Account(userClient);
+    const user = await userAccount.get();
 
     return NextResponse.json({ success: true, user });
   } catch (err: any) {
